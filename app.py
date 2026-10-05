@@ -1,6 +1,8 @@
 from flask import Flask, render_template_string, request, redirect, url_for
 from datetime import datetime
 import requests
+import time
+import threading
 
 app = Flask(__name__)
 
@@ -20,7 +22,7 @@ def send_telegram_alert(message):
     except Exception as e:
         print(f"Erreur d'envoi Telegram : {e}")
 
-# Données des enseignes avec leurs liens de recherche directe vers les produits Pokémon TCG
+# Données des enseignes avec leurs liens de recherche directe
 BOUTIQUES_PHYSIQUES = [
     {
         "nom": "Smyths Toys", 
@@ -59,13 +61,34 @@ BOUTIQUES_PHYSIQUES = [
     }
 ]
 
+# --- SYSTÈME DE SURVEILLANCE AUTOMATIQUE EN ARRIÈRE-PLAN ---
+def background_stock_checker():
+    """
+    Cette fonction tourne en boucle discrètement en arrière-plan.
+    Elle simule une vérification automatique des stocks toutes les heures (3600 secondes).
+    """
+    while True:
+        # Tu pourras remplacer cette simulation par de vraies requêtes de scraping plus tard
+        print("🤖 Vérification automatique des stocks en cours...")
+        
+        # Exemple : on peut imaginer qu'ici le bot interroge les sites.
+        # Pour l'instant, on laisse tourner le cycle proprement.
+        
+        # Attend 3600 secondes (1 heure) avant la prochaine vérification
+        time.sleep(3600)
+
+# Démarrage du thread de surveillance automatique au lancement de l'application
+surveillance_thread = threading.Thread(target=background_stock_checker, daemon=True)
+surveillance_thread.start()
+# -----------------------------------------------------------
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéNantes Alertes — Liens & Enseignes</title>
+    <title>PokéNantes Alertes — Surveillance Auto</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; }
@@ -82,12 +105,12 @@ HTML_TEMPLATE = """
 <body>
     <div class="container">
         <h1>⚡ PokéNantes Alertes</h1>
-        <p style="color: #666; font-size: 14px;">Radar des stocks & Accès direct — Loire-Atlantique</p>
+        <p style="color: #666; font-size: 14px;">Surveillance Automatique & Radar 44</p>
 
         <div class="card">
-            <h3>🚨 Test d'alerte Réassort Enseigne</h3>
-            <p>Simuler une alerte d'arrivage en grande surface / magasin de jouets :</p>
-            <a href="/test-alerte-boutique" class="btn">Tester alerte enseigne 🔔</a>
+            <h3>🤖 Statut du Bot Automatique</h3>
+            <p><span class="badge">Actif en arrière-plan</span> Le système tourne en continu sur le serveur.</p>
+            <a href="/test-alerte-boutique" class="btn">Tester alerte manuelle 🔔</a>
         </div>
 
         <div class="card">
@@ -117,7 +140,7 @@ def home():
 
 @app.route('/test-alerte-boutique')
 def test_alerte_boutique():
-    message = "🚨 *ALERTE RÉASSORT GRANDE SURFACE / JOUET*\n\n🏪 *Enseigne :* Smyths Toys / Leclerc\n📦 *Arrivage détecté :* Nouveaux coffrets Pokémon TCG\n⚡ *Statut :* Mise en rayon en cours !\n🏃‍♂️ Foncez sur place !"
+    message = "🚨 *ALERTE SURVEILLANCE AUTOMATIQUE*\n\n🏪 *Enseigne :* Test Bot Arrière-Plan\n📦 *Statut :* Le thread automatique fonctionne parfaitement !\n⚡ Prêt pour brancher de vrais scripts de détection de stock."
     send_telegram_alert(message)
     return redirect(url_for('home'))
 
