@@ -76,7 +76,7 @@ BOUTIQUES_PHYSIQUES = [
     }
 ]
 
-# Calendrier officiel des sorties et stocks prévisionnels 2026 (mis à jour avec le 16 octobre)
+# Calendrier officiel des sorties et stocks prévisionnels 2026
 CALENDRIER_STOCKS = [
     {
         "date": "02 Octobre 2026",
@@ -105,6 +105,20 @@ CALENDRIER_STOCKS = [
         "volume_estime": "Très Limité (Allocation stricte / 5 à 10 max par magasin)",
         "enseignes_Cible": "Toutes enseignes (Priorité Smyths & Leclerc)",
         "statut": "Grosse tension - Alerte max activée"
+    }
+]
+
+# Veille Réseaux Sociaux & Rumeurs du Terrain (Nantes 44)
+VEILLE_RESEAUX = [
+    {
+        "source": "TikTok / Communauté TCG 44",
+        "alerte": "Bruits de palette signalés pour la fin de semaine chez Leclerc Océane.",
+        "fiabilite": "Moyenne (À vérifier sur place)"
+    },
+    {
+        "source": "Alertes X (Twitter) / Chasseurs de stock",
+        "alerte": "Les préparatifs pour les Pokébox du 16 octobre s'organisent dans les réserves des grands magasins de l'agglomération.",
+        "fiabilite": "Élevée"
     }
 ]
 
@@ -140,7 +154,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéNantes — Calendrier & Stocks 16 Octobre</title>
+    <title>PokéNantes — Radar & Veille Réseaux</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; }
@@ -149,8 +163,9 @@ HTML_TEMPLATE = """
         .badge { background: #eef2ff; color: #4f46e5; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
         .badge-alert { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
         .badge-scraping { background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-        .shop-item, .cal-item { border-bottom: 1px solid #eee; padding: 12px 0; }
-        .shop-item:last-child, .cal-item:last-child { border-bottom: none; }
+        .badge-social { background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .shop-item, .cal-item, .social-item { border-bottom: 1px solid #eee; padding: 12px 0; }
+        .shop-item:last-child, .cal-item:last-child, .social-item:last-child { border-bottom: none; }
         .btn { display: inline-block; background: #e11d48; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px; }
         .link-btn { display: inline-block; background: #4f46e5; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; margin-top: 6px; }
         footer { text-align: center; font-size: 12px; color: #666; margin-top: 30px; }
@@ -159,12 +174,23 @@ HTML_TEMPLATE = """
 <body>
     <div class="container">
         <h1>⚡ PokéNantes Alertes</h1>
-        <p style="color: #666; font-size: 14px;">Radar Spécial Sorties & Stocks Loire-Atlantique</p>
+        <p style="color: #666; font-size: 14px;">Radar Complet, Scraping & Veille Réseaux</p>
 
         <div class="card">
             <h3>🤖 Statut du Script de Scraping</h3>
             <p><span class="badge-scraping">● Actif en arrière-plan</span> Le robot interroge les drives des enseignes toutes les 30 minutes.</p>
             <a href="/test-alerte-boutique" class="btn">Tester alerte stock 🔔</a>
+        </div>
+
+        <div class="card">
+            <h3>📱 Veille Réseaux Sociaux & Rumeurs 44</h3>
+            {% for s in veille %}
+            <div class="social-item">
+                <span class="badge-social">{{ s.source }}</span><br>
+                <p style="margin: 6px 0; font-size: 14px;">{{ s.alerte }}</p>
+                <span style="font-size: 12px; color: #666;">Indice : {{ s.fiabilite }}</span>
+            </div>
+            {% endfor %}
         </div>
 
         <div class="card">
@@ -203,11 +229,11 @@ HTML_TEMPLATE = """
 @app.route('/')
 def home():
     now = datetime.now().strftime('%d/%m/%Y à %H:%M')
-    return render_template_string(HTML_TEMPLATE, boutiques=BOUTIQUES_PHYSIQUES, calendrier=CALENDRIER_STOCKS, current_time=now)
+    return render_template_string(HTML_TEMPLATE, boutiques=BOUTIQUES_PHYSIQUES, calendrier=CALENDRIER_STOCKS, veille=VEILLE_RESEAUX, current_time=now)
 
 @app.route('/test-alerte-boutique')
 def test_alerte_boutique():
-    message = "🚨 *ALERTE SPÉCIALE - SORTIE 16 OCTOBRE*\n\n🏪 *Enseigne :* Smyths Toys / Leclerc Océane\n📦 *Produit :* Pokébox / Coffrets Spéciaux\n📊 *Volume estimé :* ~10 à 20 boîtes\n⚡ *Statut :* Stocks imminents en rayon !\n🏃‍♂️ Foncez sur place !"
+    message = "🚨 *ALERTE VEILLE & RÉSEAUX NANTES*\n\n📱 *Source :* Rumeur TikTok / X validée\n📦 *Statut :* Mouvement suspect détecté sur les stocks nantais !\n⚡ Foncez vérifier !"
     send_telegram_alert(message)
     return redirect(url_for('home'))
 
