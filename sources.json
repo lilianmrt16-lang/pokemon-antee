@@ -1,0 +1,107 @@
+[
+  {
+    "name": "Pokémon France",
+    "url": "https://www.pokemon.com/fr",
+    "enabled": true
+  },
+  {
+    "name": "Amazon France",
+    "url": "https://www.amazon.fr/s?k=cartes+pokemon",
+    "enabled": true
+  },
+  {
+    "name": "FNAC",
+    "url": "https://www.fnac.com/SearchResult/ResultList.aspx?Search=cartes+pokemon",
+    "enabled": true
+  },
+  {
+    "name": "Cultura",
+    "url": "https://www.cultura.com/search?q=cartes%20pokemon",
+    "enabled": true
+  },
+  {
+    "name": "Carrefour",
+    "url": "https://www.carrefour.fr/s?q=cartes%20pokemon",
+    "enabled": true
+  },
+  {
+    "name": "E.Leclerc",
+    "url": "https://www.e.leclerc/cat/cartes-a-collectionner",
+    "enabled": true
+  },
+  {
+    "name": "Auchan",
+    "url": "https://www.auchan.fr/recherche?text=cartes%20pokemon",
+    "enabled": true
+  },
+  {
+    "name": "Micromania",
+    "url": "https://www.micromania.fr/recherche.html?query=pokemon",
+    "enabled": true
+  },
+  {
+    "name": "King Jouet",
+    "url": "https://www.king-jouet.com/recherche/?q=pokemon",
+    "enabled": true
+  },
+  {
+    "name": "Smyths Toys",
+    "url": "https://www.smythstoys.com/fr/fr-fr/recherche?q=pokemon",
+    "enabled": true
+  },
+  {
+    "name": "Pokuji",
+    "url": "https://pokuji.com",
+    "enabled": true
+  },
+  {
+    "name": "Sortilèges Nantes",
+    "url": "https://www.sortileges.fr",
+    "enabled": true
+  },
+  {
+    "name": "Le Temple du Jeu",
+    "url": "https://www.letempledujeu.fr",
+    "enabled": true
+  },
+  {
+    "name": "Troc N'Troll",
+    "url": "https://www.trocntroll.com",
+    "enabled": true
+  },
+  {
+    "name": "Terres de Jeux",
+    "url": "https://www.terresdejeux.fr",
+    "enabled": true
+  },
+  {
+    "name": "Ludotrotter",
+    "url": "https://www.ludotrotter.fr",
+    "enabled": true
+  },
+  {
+    "name": "Galaxie Games",
+    "url": "https://www.galaxiegames.fr",
+    "enabled": true
+  },
+  {
+    "name": "La Mal'O Jeux",
+    "url": "https://www.lamalojeux.fr",
+    "enabled": true
+  },
+  {
+    "name": "Archi Chouette",
+    "url": "https://www.archichouette.fr",
+    "enabled": true
+  },
+  {
+    "name": "Japanim Nantes Atlantis",
+    "url": "https://www.japanim.com",
+    "enabled": true
+  },
+  {
+    "name": "KingDultes / Repaire des TCG",
+    "url": "https://www.kingdultes.com",
+    "enabled": true
+  }
+]
