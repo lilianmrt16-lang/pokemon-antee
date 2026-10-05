@@ -1,9 +1,25 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, request, redirect, url_for
 from datetime import datetime
+import requests
 
 app = Flask(__name__)
 
-# Template HTML moderne et épuré pour mobile
+# TES VRAIES INFORMATIONS INTÉGRÉES :
+TELEGRAM_BOT_TOKEN = "8841690888:AAGWBQQvvgmX_n3MQ3sfFsk_pAvNbMe0XTQ"
+TELEGRAM_CHAT_ID = "1030632520"
+
+def send_telegram_alert(message):
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": message,
+        "parse_mode": "Markdown"
+    }
+    try:
+        requests.post(url, json=payload)
+    except Exception as e:
+        print(f"Erreur d'envoi Telegram : {e}")
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="fr">
@@ -17,6 +33,7 @@ HTML_TEMPLATE = """
         h1 { font-size: 24px; color: #111; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .badge { background: #eef2ff; color: #4f46e5; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .btn { display: inline-block; background: #4f46e5; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px; }
         footer { text-align: center; font-size: 12px; color: #666; margin-top: 30px; }
     </style>
 </head>
@@ -27,8 +44,9 @@ HTML_TEMPLATE = """
 
         <div class="card">
             <h3>🔴 Dernières alertes</h3>
-            <p><strong>FNAC Nantes & Pokuji :</strong> Système en cours de synchronisation...</p>
-            <span class="badge">Veille active (30 min)</span>
+            <p><strong>Système Telegram :</strong> Connecté et prêt à notifier</p>
+            <span class="badge">Veille active (30 min)</span><br>
+            <a href="/test-alerte" class="btn">Tester une notification test 🔔</a>
         </div>
 
         <div class="card">
@@ -51,6 +69,12 @@ HTML_TEMPLATE = """
 def home():
     now = datetime.now().strftime('%d/%m/%Y à %H:%M')
     return render_template_string(HTML_TEMPLATE, current_time=now)
+
+@app.route('/test-alerte')
+def test_alerte():
+    message = "🚨 *ALERTE TEST POKÉNANTES*\n\n📦 Produit : Coffret Pokémon Test\n🏪 Lieu : FNAC Nantes / Pokuji\n💰 Prix : 49,99 €\n\nLe système de notification fonctionne à merveille !"
+    send_telegram_alert(message)
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
