@@ -23,7 +23,7 @@ def send_telegram_alert(message):
     except Exception as e:
         print(f"Erreur d'envoi Telegram : {e}")
 
-# Données de toutes les enseignes nantaises (Grandes surfaces, Jouets & Boutiques spécialisées)
+# Données de toutes les enseignes nantaises
 BOUTIQUES_PHYSIQUES = [
     {
         "nom": "Smyths Toys", 
@@ -76,7 +76,7 @@ BOUTIQUES_PHYSIQUES = [
     }
 ]
 
-# Calendrier officiel des sorties et stocks prévisionnels 2026
+# Calendrier officiel des sorties et stocks prévisionnels 2026 (mis à jour avec le 16 octobre)
 CALENDRIER_STOCKS = [
     {
         "date": "02 Octobre 2026",
@@ -86,11 +86,18 @@ CALENDRIER_STOCKS = [
         "statut": "En cours de déploiement en rayon"
     },
     {
+        "date": "16 Octobre 2026",
+        "produit": "Pokébox / Coffrets Spéciaux & Éditions Thématiques",
+        "volume_estime": "Faible à Modéré (~10 à 20 boîtes par magasin)",
+        "enseignes_Cible": "Smyths Toys (Atlantis), Leclerc (Océane/Paridis)",
+        "statut": "🔥 Arrivage imminent - Tension élevée"
+    },
+    {
         "date": "23 Octobre 2026",
         "produit": "Deck Crafter's Collection (30 Ans)",
         "volume_estime": "Faible (~10 unités par enseigne)",
         "enseignes_Cible": "King Jouet, Auchan, JouéClub",
-        "statut": "Arrivage imminent"
+        "statut": "Préparation du stock"
     },
     {
         "date": "06 Novembre 2026",
@@ -133,7 +140,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéNantes — Radar Complet 44</title>
+    <title>PokéNantes — Calendrier & Stocks 16 Octobre</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; }
@@ -152,7 +159,7 @@ HTML_TEMPLATE = """
 <body>
     <div class="container">
         <h1>⚡ PokéNantes Alertes</h1>
-        <p style="color: #666; font-size: 14px;">Radar Complet & Enseignes Loire-Atlantique</p>
+        <p style="color: #666; font-size: 14px;">Radar Spécial Sorties & Stocks Loire-Atlantique</p>
 
         <div class="card">
             <h3>🤖 Statut du Script de Scraping</h3>
@@ -200,7 +207,7 @@ def home():
 
 @app.route('/test-alerte-boutique')
 def test_alerte_boutique():
-    message = "🚨 *ALERTE RADAR NANTES*\n\n🏪 *Enseigne :* Smyths / King Discount / Sortilèges\n📦 *Statut :* Le réseau complet est sous surveillance active !\n⚡ Foncez vérifier les stocks !"
+    message = "🚨 *ALERTE SPÉCIALE - SORTIE 16 OCTOBRE*\n\n🏪 *Enseigne :* Smyths Toys / Leclerc Océane\n📦 *Produit :* Pokébox / Coffrets Spéciaux\n📊 *Volume estimé :* ~10 à 20 boîtes\n⚡ *Statut :* Stocks imminents en rayon !\n🏃‍♂️ Foncez sur place !"
     send_telegram_alert(message)
     return redirect(url_for('home'))
 
