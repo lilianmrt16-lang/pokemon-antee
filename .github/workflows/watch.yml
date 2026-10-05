@@ -1,0 +1,21 @@
+name: Veille PokéNantes
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Vérifier les sites Pokémon
+        env:
+          URL: ${{ secrets.POKENANTES_URL }}
+          TOKEN: ${{ secrets.POKENANTES_ADMIN_TOKEN }}
+        run: |
+          curl -fsS -X POST "$URL/admin/check?token=$TOKEN" \
+            > /tmp/result.json
+
+          cat /tmp/result.json
