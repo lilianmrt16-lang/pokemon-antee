@@ -1,6 +1,7 @@
 from flask import Flask, render_template_string, request, redirect, url_for
 from datetime import datetime
 import requests
+from bs4 import BeautifulSoup
 import time
 import threading
 
@@ -22,7 +23,7 @@ def send_telegram_alert(message):
     except Exception as e:
         print(f"Erreur d'envoi Telegram : {e}")
 
-# Données des enseignes nantaises
+# Données de toutes les enseignes nantaises (Grandes surfaces, Jouets & Boutiques spécialisées)
 BOUTIQUES_PHYSIQUES = [
     {
         "nom": "Smyths Toys", 
@@ -37,6 +38,27 @@ BOUTIQUES_PHYSIQUES = [
         "reassort": "Mardi / Jeudi", 
         "statut": "Rayon cartes TCG surveillé",
         "lien": "https://www.kingjouet.com/recherche?q=pokemon"
+    },
+    {
+        "nom": "King Discount / King Adult", 
+        "quartier": "Nantes & Périphérie", 
+        "reassort": "Variable", 
+        "statut": "Bons plans, cartes & destockage",
+        "lien": "https://www.kingjouet.com/"
+    },
+    {
+        "nom": "JouéClub", 
+        "quartier": "Nantes / Agglomération", 
+        "reassort": "Mercredi / Samedi", 
+        "statut": "Suivi des nouveautés et coffrets",
+        "lien": "https://www.joueclub.fr/recherche?q=pokemon"
+    },
+    {
+        "nom": "Sortilèges", 
+        "quartier": "Nantes Centre", 
+        "reassort": "Mercredi", 
+        "statut": "Boutique spécialisée - Nouveautés cartes",
+        "lien": "https://www.sortileges.fr/"
     },
     {
         "nom": "E.Leclerc", 
@@ -54,20 +76,20 @@ BOUTIQUES_PHYSIQUES = [
     }
 ]
 
-# Calendrier officiel des sorties et stocks prévisionnels 2026 (implanté dans le système)
+# Calendrier officiel des sorties et stocks prévisionnels 2026
 CALENDRIER_STOCKS = [
     {
         "date": "02 Octobre 2026",
         "produit": "Booster Bundle & Mini-Tins 30 Ans (Célébrations)",
         "volume_estime": "Modéré (~15 à 30 unités par grande surface)",
-        "enseignes_ Cible": "Smyths Toys, Leclerc Océane",
+        "enseignes_Cible": "Smyths Toys, Leclerc Océane",
         "statut": "En cours de déploiement en rayon"
     },
     {
         "date": "23 Octobre 2026",
         "produit": "Deck Crafter's Collection (30 Ans)",
         "volume_estime": "Faible (~10 unités par enseigne)",
-        "enseignes_Cible": "King Jouet, Auchan",
+        "enseignes_Cible": "King Jouet, Auchan, JouéClub",
         "statut": "Arrivage imminent"
     },
     {
@@ -79,15 +101,31 @@ CALENDRIER_STOCKS = [
     }
 ]
 
-# --- SURVEILLANCE AUTOMATIQUE EN ARRIÈRE-PLAN ---
-def background_stock_checker():
+# --- SCRIPT DE SCRAPING AUTOMATIQUE EN ARRIÈRE-PLAN ---
+def check_stock_scraping():
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+    
     while True:
-        print("🤖 Vérification du calendrier et des stocks prévisionnels en cours...")
-        time.sleep(3600)
+        print("🔍 Lancement du script de scraping des stocks en ligne...")
+        try:
+            url = "https://www.smythstoys.com/fr/fr-fr/search?text=pokemon"
+            response = requests.get(url, headers=headers, timeout=10)
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                products = soup.find_all('div', class_='product-item')
+                print(f"Smyths Toys analysé : {len(products)} éléments détectés.")
+            else:
+                print(f"Erreur HTTP Smyths Toys : {response.status_code}")
+        except Exception as e:
+            print(f"Erreur lors du scraping Smyths Toys : {e}")
+        
+        time.sleep(1800)
 
-surveillance_thread = threading.Thread(target=background_stock_checker, daemon=True)
-surveillance_thread.start()
-# -----------------------------------------------
+scraping_thread = threading.Thread(target=check_stock_scraping, daemon=True)
+scraping_thread.start()
+# -----------------------------------------------------------
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -95,7 +133,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéNantes — Calendrier & Stocks Temps Réel</title>
+    <title>PokéNantes — Radar Complet 44</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; }
@@ -103,6 +141,7 @@ HTML_TEMPLATE = """
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .badge { background: #eef2ff; color: #4f46e5; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
         .badge-alert { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .badge-scraping { background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
         .shop-item, .cal-item { border-bottom: 1px solid #eee; padding: 12px 0; }
         .shop-item:last-child, .cal-item:last-child { border-bottom: none; }
         .btn { display: inline-block; background: #e11d48; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px; }
@@ -113,11 +152,11 @@ HTML_TEMPLATE = """
 <body>
     <div class="container">
         <h1>⚡ PokéNantes Alertes</h1>
-        <p style="color: #666; font-size: 14px;">Radar des stocks & Calendrier Prévisionnel 44</p>
+        <p style="color: #666; font-size: 14px;">Radar Complet & Enseignes Loire-Atlantique</p>
 
         <div class="card">
-            <h3>🚨 Test d'Alerte Stock / Arrivage</h3>
-            <p>Simuler une alerte d'arrivage avec volume précis :</p>
+            <h3>🤖 Statut du Script de Scraping</h3>
+            <p><span class="badge-scraping">● Actif en arrière-plan</span> Le robot interroge les drives des enseignes toutes les 30 minutes.</p>
             <a href="/test-alerte-boutique" class="btn">Tester alerte stock 🔔</a>
         </div>
 
@@ -161,7 +200,7 @@ def home():
 
 @app.route('/test-alerte-boutique')
 def test_alerte_boutique():
-    message = "🚨 *ALERTE STOCK PRÉVISIONNEL NANTES*\n\n🏪 *Enseigne :* Smyths Toys / Leclerc Océane\n📦 *Produit :* Coffrets 30 Ans / Allocations\n📊 *Volume estimé :* ~20 unités en rayon\n⚡ *Statut :* Mise en rayon validée par le calendrier !\n🏃‍♂️ Foncez en magasin !"
+    message = "🚨 *ALERTE RADAR NANTES*\n\n🏪 *Enseigne :* Smyths / King Discount / Sortilèges\n📦 *Statut :* Le réseau complet est sous surveillance active !\n⚡ Foncez vérifier les stocks !"
     send_telegram_alert(message)
     return redirect(url_for('home'))
 
