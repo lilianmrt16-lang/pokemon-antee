@@ -20,13 +20,43 @@ def send_telegram_alert(message):
     except Exception as e:
         print(f"Erreur d'envoi Telegram : {e}")
 
-# Données des grandes surfaces, King Jouet, Smyths Toys et King Discount sur Nantes & alentours
+# Données des enseignes avec leurs liens de recherche directe vers les produits Pokémon TCG
 BOUTIQUES_PHYSIQUES = [
-    {"nom": "Smyths Toys", "quartier": "Saint-Herblain (Atlantis Le Sillon)", "reassort": "Mercredi / Vendredi", "statut": "Gros arrivages de coffrets & bundles"},
-    {"nom": "King Jouet", "quartier": "Nantes Beaulieu & Orvault", "reassort": "Mardi / Jeudi", "statut": "Rayon cartes TCG surveillé"},
-    {"nom": "King Discount / King Adult", "quartier": "Agglomération Nantaise", "reassort": "Variable", "statut": "Bons plans & destockage"},
-    {"nom": "E.Leclerc", "quartier": "Océane (Rezé) & Paridis (Nantes)", "reassort": "Mardi / Vendredi", "statut": "Arrivages massifs en tête de gondole"},
-    {"nom": "Auchan", "quartier": "Saint-Sébastien-sur-Loire", "reassort": "Mercredi", "statut": "Réassorts réguliers jeux & jouets"}
+    {
+        "nom": "Smyths Toys", 
+        "quartier": "Saint-Herblain (Atlantis Le Sillon)", 
+        "reassort": "Mercredi / Vendredi", 
+        "statut": "Gros arrivages de coffrets & bundles",
+        "lien": "https://www.smythstoys.com/fr/fr-fr/search?text=pokemon"
+    },
+    {
+        "nom": "King Jouet", 
+        "quartier": "Nantes Beaulieu & Orvault", 
+        "reassort": "Mardi / Jeudi", 
+        "statut": "Rayon cartes TCG surveillé",
+        "lien": "https://www.kingjouet.com/recherche?q=pokemon"
+    },
+    {
+        "nom": "King Discount / King Adult", 
+        "quartier": "Agglomération Nantaise", 
+        "reassort": "Variable", 
+        "statut": "Bons plans & destockage",
+        "lien": "https://www.kingjouet.com/"
+    },
+    {
+        "nom": "E.Leclerc", 
+        "quartier": "Océane (Rezé) & Paridis (Nantes)", 
+        "reassort": "Mardi / Vendredi", 
+        "statut": "Arrivages massifs en tête de gondole",
+        "lien": "https://www.e.leclerc/cat/pokemon"
+    },
+    {
+        "nom": "Auchan", 
+        "quartier": "Saint-Sébastien-sur-Loire", 
+        "reassort": "Mercredi", 
+        "statut": "Réassorts réguliers jeux & jouets",
+        "lien": "https://www.auchan.fr/recherche?text=pokemon"
+    }
 ]
 
 HTML_TEMPLATE = """
@@ -35,23 +65,24 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéNantes Alertes — Grandes Surfaces & Jouets</title>
+    <title>PokéNantes Alertes — Liens & Enseignes</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f8f9fa; color: #333; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; }
         h1 { font-size: 24px; color: #111; }
         .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .badge { background: #eef2ff; color: #4f46e5; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-        .shop-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .shop-item { border-bottom: 1px solid #eee; padding: 12px 0; }
         .shop-item:last-child { border-bottom: none; }
         .btn { display: inline-block; background: #e11d48; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px; }
+        .link-btn { display: inline-block; background: #4f46e5; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; margin-top: 6px; }
         footer { text-align: center; font-size: 12px; color: #666; margin-top: 30px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>⚡ PokéNantes Alertes</h1>
-        <p style="color: #666; font-size: 14px;">Radar des stocks — Grandes Surfaces & Magasins de Jouets (44)</p>
+        <p style="color: #666; font-size: 14px;">Radar des stocks & Accès direct — Loire-Atlantique</p>
 
         <div class="card">
             <h3>🚨 Test d'alerte Réassort Enseigne</h3>
@@ -60,12 +91,13 @@ HTML_TEMPLATE = """
         </div>
 
         <div class="card">
-            <h3>📍 Suivi des Enseignes & Jours de Réassort</h3>
+            <h3>📍 Suivi des Enseignes & Liens Rapides</h3>
             {% for b in boutiques %}
             <div class="shop-item">
                 <strong>{{ b.nom }}</strong> <span style="font-size: 12px; color: #666;">({{ b.quartier }})</span><br>
                 <span style="font-size: 13px; color: #4f46e5;">📦 Réassort habituel : {{ b.reassort }}</span><br>
-                <span style="font-size: 12px; color: #059669;">✔ {{ b.statut }}</span>
+                <span style="font-size: 12px; color: #059669;">✔ {{ b.statut }}</span><br>
+                <a href="{{ b.lien }}" target="_blank" class="link-btn">🔗 Vérifier le stock en ligne</a>
             </div>
             {% endfor %}
         </div>
